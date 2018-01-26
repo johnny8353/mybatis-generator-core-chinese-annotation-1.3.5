@@ -75,15 +75,18 @@ public class DefaultCommentGenerator implements CommentGenerator {
         suppressAllComments = false;
         addRemarkComments = false;
         addMethodFinal = true;
-        author = "orange1438 code generator";
+        author = "hand code generator";
     }
 
     /* (non-Javadoc)
      * @see org.mybatis.generator.api.CommentGenerator#addJavaFileComment(org.mybatis.generator.api.dom.java.CompilationUnit)
      */
     public void addJavaFileComment(CompilationUnit compilationUnit) {
+        //文件注释
         // add no file level comments by default
-        compilationUnit.addFileCommentLine("/* https://github.com/orange1438 */");
+//        compilationUnit.addFileCommentLine("/* https://github.com/orange1438 */");
+        compilationUnit.addFileCommentLine("/* create " + getDateString() +
+                " */");
     }
 
     /**
@@ -188,9 +191,12 @@ public class DefaultCommentGenerator implements CommentGenerator {
             return;
         }
         javaElement.addJavaDocLine("/**");
-        javaElement.addJavaDocLine(" * 本文件由 https://github.com/orange1438/mybatis-generator-core-chinese-annotation1.3.5-chinese-annotation 自动生成");
+//        javaElement.addJavaDocLine(" * 本文件由 https://github.com/orange1438/mybatis-generator-core-chinese-annotation1.3.5-chinese-annotation 自动生成");
         //    javaElement.addJavaDocLine(" * 本文件由 橙子 自动生成");
-        addJavadocTag(javaElement, false);
+//        addJavadocTag(javaElement, false);
+        javaElement.addJavaDocLine("* @内容摘要: Mapper层代码逻辑"); //$NON-NLS-1$
+        javaElement.addJavaDocLine("* @完成日期: " + getDateString()); //$NON-NLS-1$
+        javaElement.addJavaDocLine("* @编码作者: 黃福強 johnnyHuang "); //$NON-NLS-1$
         javaElement.addJavaDocLine(" */");
     }
 
@@ -201,13 +207,18 @@ public class DefaultCommentGenerator implements CommentGenerator {
     public void addModelClassComment(TopLevelClass topLevelClass,
                                      IntrospectedTable introspectedTable) {
         // 添加类注释
-        if (suppressAllComments || !addRemarkComments) {
+        if (suppressAllComments ) {//|| !addRemarkComments
             return;
         }
-
-        topLevelClass.addJavaDocLine("/** "); //$NON-NLS-1$
-
+        // * 内容摘要：XXX
+        // * 完成日期：${date}
+        // * 编码作者：JohnnyHuang
         String remarks = introspectedTable.getFullyQualifiedTable().getRemark();
+        topLevelClass.addJavaDocLine("/** "); //$NON-NLS-1$
+        topLevelClass.addJavaDocLine("* @内容摘要: Model "+ remarks); //$NON-NLS-1$
+        topLevelClass.addJavaDocLine("* @完成日期: " + getDateString()); //$NON-NLS-1$
+        topLevelClass.addJavaDocLine("* @编码作者: 黃福強 johnnyHuang "); //$NON-NLS-1$
+
         // String remarks = introspectedTable.getRemarks();
         if (addRemarkComments && StringUtility.stringHasValue(remarks)) {
             String[] remarkLines = remarks.split(System.getProperty("line.separator"));  //$NON-NLS-1$
@@ -216,7 +227,7 @@ public class DefaultCommentGenerator implements CommentGenerator {
             }
         }
 
-        addJavadocTag(topLevelClass, false);
+//        addJavadocTag(topLevelClass, false);
 
         topLevelClass.addJavaDocLine(" */"); //$NON-NLS-1$
     }
@@ -257,11 +268,18 @@ public class DefaultCommentGenerator implements CommentGenerator {
         //对应表中字段的备注(数据库中自己写的备注信息)
         if (introspectedColumn.getRemarks() != null
                 && !introspectedColumn.getRemarks().equals("")) {
-            sb.append("// " + introspectedColumn.getRemarks());
+            sb.append("//");
+            sb.append(introspectedTable.getFullyQualifiedTable())
+                    .append('.')
+                    .append(introspectedColumn.getActualColumnName());
+            sb.append(" " + introspectedColumn.getRemarks());
             if (introspectedColumn.getDefaultValue() != null && !introspectedColumn.getDefaultValue().isEmpty()) {
                 sb.append("  默认：" + introspectedColumn.getDefaultValue());
             }
         }
+
+//        sb.append(" "+);
+
         if (sb.length() > 0) {
             field.addJavaDocLine(sb.toString());
         }
@@ -505,6 +523,7 @@ public class DefaultCommentGenerator implements CommentGenerator {
         StringBuilder sb = new StringBuilder();
         String shortName = innerClass.getType().getShortName();
         innerClass.addJavaDocLine("/**"); //$NON-NLS-1$
+        innerClass.addJavaDocLine("* 自动生成");
         sb.append(" * ")
                 .append(introspectedTable.getFullyQualifiedTable().getRemark())
                 .append(introspectedTable.getFullyQualifiedTable());
@@ -528,6 +547,8 @@ public class DefaultCommentGenerator implements CommentGenerator {
         // 生成Criteria对象的注释信息的注释
         StringBuilder sb = new StringBuilder();
         innerClass.addJavaDocLine("/**");
+        innerClass.addJavaDocLine("* 自动生成");
+        innerClass.addJavaDocLine("* Created by 黄福强 johnny on 2017/8/18.");
         sb.append(" * ").append(introspectedTable.getFullyQualifiedTable().getRemark())
                 .append(introspectedTable.getFullyQualifiedTable()).append("的映射实体");
 
